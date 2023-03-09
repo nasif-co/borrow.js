@@ -41,6 +41,7 @@ let borrower = {
     //IP location with geoplugin per https://stackoverflow.com/questions/391979/how-to-get-clients-ip-address-using-javascript?
     //Implementing CSS attribute value greater-than, less-than selectors? This could allow pseudo-if-statements
     //Page visibility API https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API ?
+    //Tocuh gesture events?
   },
 
   checkWhatToBorrow: function () {
@@ -204,6 +205,7 @@ let borrower = {
      * attr: acceleration ranges low, low-mid, mid, mid-high, high
 		 *
 		 * TO DO: Currently no reliable way to check if DeviceMotion events exist without adding an event listener. For now we detect if it is a touchscreen and assume it must have the events. Must find a better solution for this
+     * TO DO: Shake toggles? When shook frontward turn on a toggle that turns off next shake? Or Shake as counter?
 		 */
 		
 		if ( window.matchMedia("(pointer: fine)").matches ) {
@@ -380,6 +382,11 @@ let borrower = {
         return;
       }
 
+      //Disable functionality of spacebar scrolling down on the body
+      if(e.code == 'Space' && e.target == document.body) {
+        e.preventDefault();
+      }
+
       if (!e.repeat) {
         if ( ["CapsLock", "Tab"].indexOf( e.code ) == -1 && borrower.globals.pressedKeys.indexOf( e.code ) == -1 ) {
           //Active (pressed) keys
@@ -539,7 +546,8 @@ let borrower = {
 		 * attr: data-load-state for replaced elements, as well as global
 		 *
 		 * TO DO: Load events for other replaced elements like video, embed, audio, canvas and object. (It is not clear at this time if all of these offer the possibility to detect load state).
-		 */
+		 * TO DO: Detect when src attribute is changed to restart load state detection
+     */
 		
 		/* Images ----------------------------------------------------------*/
 		const imgs = document.querySelectorAll( 'img[src]:not([src=""])' );
@@ -601,7 +609,7 @@ let borrower = {
 	borrowCounter : function () {
 		/*
 		 * attr: counter
-		 * properties: counter-update (allow incrementing/decrementing/setting counter based on click/hover/scroll triggers)
+		 * properties: counter-update (allow incrementing/decrementing/setting counter based on click/hover/scroll/keyboard(?) triggers)
 		 */
 	},
 	
@@ -708,5 +716,6 @@ let borrower = {
 };
 
 window.addEventListener( 'load', function(){
+  //TO DO: Not start on full page load, but rather as soon as all stylesheets have loaded
 	borrower.checkWhatToBorrow();
 } );
