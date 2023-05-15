@@ -73,7 +73,7 @@ let borrower = {
     
 		/* Activate required features -------------------------------------------------*/
 		//Mouse Features
-		if( cssString.includes('--mouse-') || cssString.includes('[data-mouse-state') ){
+		if( cssString.includes('--mouse-') || cssString.includes('[data-mouse-state') || cssString.includes('-click-count') ){
 			this.borrowMouse();
 		}
     
@@ -172,6 +172,24 @@ let borrower = {
         }
       }
     } );
+		
+		/* Mouse click counter -------------------------------------------------------------------*/
+		document.body.addEventListener( "click", function(e){
+			if( e.button == 0){
+				borrower.globals.clickCount ++;
+				document.body.setAttribute( "data-click-count", borrower.globals.clickCount );
+				document.body.style.setProperty( "--global-click-count", borrower.globals.clickCount );
+				
+				if( e.target != e.currentTarget ){
+					let localClickCount = 1;
+					if( e.target.getAttribute('data-click-count') != null ){
+						localClickCount += parseInt(e.target.getAttribute('data-click-count'));
+					}
+					e.target.setAttribute( "data-click-count", borrower.globals.clickCount );
+					e.target.style.setProperty( "--click-count", borrower.globals.clickCount );
+				}
+			} 
+		});
   },
 
   borrowURL: function () {
@@ -704,6 +722,7 @@ let borrower = {
 
   globals: {
     mousePos: null,
+		clickCount: 0,
     pressedKeys: null,
     toggledKeys: null,
     urlHash: null,
